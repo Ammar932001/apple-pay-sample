@@ -41,16 +41,11 @@
         <apple-pay-button buttonstyle="black" type="plain" locale="en-US"
             onclick="onApplePayButtonClicked()"></apple-pay-button>
             
-            <button onclick="onApplePayButtonClicked()">Test Apple Pay</button>
             
     </div>
     
     <script>
     
-    if (window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
-	   // Show Apple Pay button
-       console.log('>>>>>>>apple pay can make payments',window.ApplePaySession,window.ApplePaySession.canMakePayments())
-    }
     
     function onApplePayButtonClicked() {
     
