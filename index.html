@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sample HTML Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    header, footer {
+      background-color: #f4f4f4;
+      padding: 10px;
+      text-align: center;
+    }
+    main {
+      margin-top: 20px;
+    }
+  </style>
+   <script crossorigin src="https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js"></script>
+</head>
+<body>
+  
+
+  <main>
+    <h2>About This Page test</h2>
+    <p>This is a simple example to demonstrate the basic structure of an HTML document.</p>
+    
+    <div>
+       
+        <style>
+            apple-pay-button {
+                --apple-pay-button-width: 300px;
+                --apple-pay-button-height: 100px;
+                --apple-pay-button-border-radius: 3px;
+                --apple-pay-button-padding: 0px 0px;
+                --apple-pay-button-box-sizing: border-box;
+            }
+        </style>
+        <apple-pay-button buttonstyle="black" type="plain" locale="en-US"
+            onclick="onApplePayButtonClicked()"></apple-pay-button>
+            
+            <button onclick="onApplePayButtonClicked()">Test Apple Pay</button>
+            
+    </div>
+    
+    <script>
+    
+    if (window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
+	   // Show Apple Pay button
+       console.log('>>>>>>>apple pay can make payments',window.ApplePaySession,window.ApplePaySession.canMakePayments())
+    }
+    
+    function onApplePayButtonClicked() {
+    
+        let sampleApplePayPaymentRequest = {
+            currencyCode: 'GBP',
+            countryCode: 'GB',
+            requiredBillingContactFields: ['email', 'name', 'phone', 'postalAddress'],
+            requiredShippingContactFields: ['email', 'name', 'phone'],
+            lineItems: [{
+                label: 'Test item 1',
+                amount: '2.99'
+            }],
+            total: {
+                label: 'Total label',
+                amount: '1.00'
+            },
+            supportedNetworks: [
+                "amex",
+                "visa",
+                "discover",
+                "masterCard"
+            ],
+            merchantCapabilities: ['supports3DS']
+        };
+    
+        const session = new ApplePaySession(3, sampleApplePayPaymentRequest)
+        
+        session.begin();
+        console.log('>>>>session begins',session)
+        session.onvalidatemerchant = event => {
+            console.log('>>>>>>event is>>>>>>',event);
+            // fetch("https://vsf2.tm8.co.uk/dynamic.php?validationURL=" + event.validationURL)
+            fetch("https://vsf2.tm8.co.uk/dynamic.php?validationURL=" + 'https://apple-pay-gateway-cert.apple.com/paymentservices/startSession ')
+            .then(response => response.json())
+            .then(json => {
+		    console.log('>>>>>>response JSON is>>>>>>', json);
+		    session.completeMerchantValidation(json);
+		})
+		      
+            .catch(function (err) {
+                alert("Error")
+            });
+    
+        }
+        session.onpaymentauthorized = (event) => {
+          const payment = event.payment
+          console.log('>>>>>>>payment authorized section>>>>>>>>',payment)
+        
+        }
+    
+    }
+    </script>
+ 
+  </main>
+
+   
+</body>
+</html>
